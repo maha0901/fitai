@@ -33,6 +33,21 @@ pipeline {
         '''
       }
     }
+
+    stage('Compose validation') {
+      steps {
+        sh '''
+          set -e
+          echo "Validating docker compose configuration..."
+          if command -v docker >/dev/null 2>&1; then
+            docker compose config -q
+            echo "docker-compose.yml is valid."
+          else
+            echo "Docker CLI is not available in this Jenkins agent. Skipping compose validation."
+          fi
+        '''
+      }
+    }
   }
 
   post {
