@@ -1,0 +1,29 @@
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# Dependencies/build artifacts
+**/node_modules/
+**/dist/
+
+# Logs/temp files
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local TLS materials
+certs/*.pem
+
+# Local database backups
+backup/*.sql
+
+# Local documents/materials not required for runtime
+*.pdf
+*.docx

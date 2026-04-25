@@ -1,0 +1,14 @@
+# Запуск с HTTPS (SSL). Объединяется с основным docker-compose.yml.
+# 1. Создайте папку certs/ и положите туда сертификаты:
+#    certs/fullchain.pem  и  certs/privkey.pem
+#    (например из Let's Encrypt: certbot certonly --standalone -d ваш-домен.ru)
+# 2. Запуск: docker compose -p fitai -f docker-compose.yml -f docker-compose.https.yml up --build
+# 3. Сайт: https://localhost (порт 443). HTTP (80) отключён в этой конфигурации.
+
+services:
+  frontend:
+    ports:
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/ssl:ro
+      - ./frontend/nginx-ssl.conf:/etc/nginx/conf.d/default.conf:ro

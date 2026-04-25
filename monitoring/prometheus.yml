@@ -1,0 +1,41 @@
+# Prometheus — сбор метрик Fit AI Server (backend /metrics)
+#
+# Targets через host.docker.internal + опубликованные порты compose — надёжно на Docker Desktop
+# (имена backend/node-exporter/cadvisor из контейнера иногда не резолвятся).
+# В compose у prometheus: extra_hosts: host.docker.internal:host-gateway
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: fit-ai-backend
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['host.docker.internal:5000']
+        labels:
+          service: fit-ai-server
+          env: docker
+
+  # Тот же проект Fit AI — лейбл service один; «кто есть кто» — по job (backend / node-exporter / cadvisor)
+  - job_name: node-exporter
+    static_configs:
+      - targets: ['host.docker.internal:9100']
+        labels:
+          service: fit-ai-server
+          component: node-exporter
+          env: docker
+
+  # Снаружи compose проброшен порт 8088 -> 8080 внутри cadvisor
+  - job_name: cadvisor
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['host.docker.internal:8088']
+        labels:
+          service: fit-ai-server
+          component: cadvisor
+          env: docker
+
+  # Опционально: Windows Exporter на хосте Windows (вне контейнера)
+  # - job_name: windows
+  #   static_configs:
+  #     - targets: ['host.docker.internal:9182']
