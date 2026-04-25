@@ -150,6 +150,21 @@ services:
       - grafana
     command: sh -c "npm install --omit=dev && node index.js"
 
+  # CI/CD (минимальная интеграция для учебного проекта)
+  jenkins:
+    networks:
+      - fitai_net
+    image: jenkins/jenkins:lts-jdk17
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    ports:
+      - "8085:8080"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   grafana_data:
+  jenkins_home:

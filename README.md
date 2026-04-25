@@ -19,6 +19,7 @@ docker-compose up --build
 - PostgreSQL: localhost:5432 (логин/пароль: postgres/postgres, БД: fit_ai_db)
 - **Prometheus:** http://localhost:9091 — сбор метрик с backend (`/metrics`; порт **9091**, если 9090 занят)
 - **Grafana:** http://localhost:3001 — логин `admin` / пароль `admin` (смените после первого входа; порт **3001**, если 3000 занят)
+- **Jenkins:** http://localhost:8085 — минимальная CI-интеграция (pipeline из `Jenkinsfile`)
 
 Метрики **именно приложения** (RPS по маршрутам, задержка p50/p95, heap Node.js) отдаёт backend на `GET http://localhost:5000/metrics` и дашборд **«Fit AI Server — метрики приложения»** в папке Grafana *Fit AI* (подключается к Prometheus автоматически).
 
@@ -39,6 +40,21 @@ docker-compose up --build
 3. Сайт будет доступен по **https://localhost** (порт 443). Порт 80 в этой конфигурации не открывается.
 
 На локальном компьютере для теста SSL можно сгенерировать самоподписанный сертификат (браузер покажет предупреждение — это нормально).
+
+### Jenkins (интеграция CI)
+
+Jenkins запускается как сервис в `docker-compose.yml` (порт `8085`).
+
+1. Откройте `http://localhost:8085`.
+2. Получите initial admin password:
+   ```bash
+   docker exec fitai-jenkins-1 cat /var/jenkins_home/secrets/initialAdminPassword
+   ```
+3. Завершите мастер настройки Jenkins (Install suggested plugins).
+4. Создайте Pipeline job и укажите источник из GitHub-репозитория проекта.
+5. В качестве pipeline script используйте `Jenkinsfile` из корня проекта.
+
+Минимальный pipeline проверяет структуру и обязательные конфигурационные файлы проекта.
 
 ## Локальная разработка без Docker
 
